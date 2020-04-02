@@ -39,9 +39,9 @@ import com.baidu.hugegraph.util.E;
 
 public class PersonalRankTraverser extends HugeTraverser {
 
-    private final double alpha;
-    private final long degree;
-    private final int maxDepth;
+    protected final double alpha;
+    protected final long degree;
+    protected final int maxDepth;
 
     public PersonalRankTraverser(HugeGraph graph, double alpha,
                                  long degree, int maxDepth) {
@@ -73,15 +73,16 @@ public class PersonalRankTraverser extends HugeTraverser {
         Set<Id> rootAdjacencies = new HashSet<>();
         for (long i = 0; i < this.maxDepth; i++) {
             Map<Id, Double> newRanks = this.calcNewRanks(outSeeds, inSeeds,
-                                                         labelId, ranks);
+                    labelId, ranks);
             ranks = this.compensateRoot(source, newRanks);
             if (i == 0) {
                 rootAdjacencies.addAll(ranks.keySet());
             }
+            System.out.println(ranks);
         }
-        // Remove directly connected neighbors
+//         Remove directly connected neighbors
         removeAll(ranks, rootAdjacencies);
-        // Remove unnecessary label
+//         Remove unnecessary label
         if (withLabel == WithLabel.SAME_LABEL) {
             removeAll(ranks, dir == Directions.OUT ? inSeeds : outSeeds);
         } else if (withLabel == WithLabel.OTHER_LABEL) {
@@ -90,8 +91,8 @@ public class PersonalRankTraverser extends HugeTraverser {
         return ranks;
     }
 
-    private Map<Id, Double> calcNewRanks(Set<Id> outSeeds, Set<Id> inSeeds,
-                                         Id label, Map<Id, Double> ranks) {
+    protected Map<Id, Double> calcNewRanks(Set<Id> outSeeds, Set<Id> inSeeds,
+                                           Id label, Map<Id, Double> ranks) {
         Map<Id, Double> newRanks = new HashMap<>();
         BiFunction<Set<Id>, Directions, Set<Id>> neighborIncrRanks;
         neighborIncrRanks = (seeds, dir) -> {
@@ -101,7 +102,7 @@ public class PersonalRankTraverser extends HugeTraverser {
                 E.checkState(oldRank != null, "Expect rank of seed exists");
 
                 Iterator<Id> iter = this.adjacentVertices(seed, dir, label,
-                                                          this.degree);
+                        this.degree);
                 List<Id> neighbors = IteratorUtils.list(iter);
 
                 long degree = neighbors.size();
@@ -130,14 +131,14 @@ public class PersonalRankTraverser extends HugeTraverser {
         return newRanks;
     }
 
-    private Map<Id, Double> compensateRoot(Id root, Map<Id, Double> newRanks) {
+    protected Map<Id, Double> compensateRoot(Id root, Map<Id, Double> newRanks) {
         double rank = newRanks.getOrDefault(root, 0.0);
         rank += (1 - this.alpha);
         newRanks.put(root, rank);
         return newRanks;
     }
 
-    private Directions getStartDirection(Id source, String label) {
+    public Directions getStartDirection(Id source, String label) {
         // NOTE: The outer layer needs to ensure that the vertex Id is valid
         HugeVertex vertex = (HugeVertex) graph().vertices(source).next();
         VertexLabel vertexLabel = vertex.schemaLabel();
@@ -146,10 +147,10 @@ public class PersonalRankTraverser extends HugeTraverser {
         Id targetLabel = edgeLabel.targetLabel();
 
         E.checkArgument(edgeLabel.linkWithLabel(vertexLabel.id()),
-                        "The vertex '%s' doesn't link with edge label '%s'",
-                        source, label);
+                "The vertex '%s' doesn't link with edge label '%s'",
+                source, label);
         E.checkArgument(!sourceLabel.equals(targetLabel),
-                        "The edge label for personal rank must " +
+                "The edge label for personal rank must " +
                         "link different vertex labels");
         if (sourceLabel.equals(vertexLabel.id())) {
             return Directions.OUT;
@@ -159,7 +160,7 @@ public class PersonalRankTraverser extends HugeTraverser {
         }
     }
 
-    private static void removeAll(Map<Id, Double> map, Set<Id> keys) {
+    protected static void removeAll(Map<Id, Double> map, Set<Id> keys) {
         for (Id key : keys) {
             map.remove(key);
         }
