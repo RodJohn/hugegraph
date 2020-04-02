@@ -64,14 +64,14 @@ public class PersonalRankTraverserV2 extends PersonalRankTraverser {
             }
             System.out.println(ranks);
         }
-        // Remove directly connected neighbors
-//        removeAll(ranks, rootAdjacencies);
-        // Remove unnecessary label
-//        if (withLabel == WithLabel.SAME_LABEL) {
-//            removeAll(ranks, dir == Directions.OUT ? inSeeds : outSeeds);
-//        } else if (withLabel == WithLabel.OTHER_LABEL) {
-//            removeAll(ranks, dir == Directions.OUT ? outSeeds : inSeeds);
-//        }
+//         Remove directly connected neighbors
+        removeAll(ranks, rootAdjacencies);
+//         Remove unnecessary label
+        if (withLabel == WithLabel.SAME_LABEL) {
+            removeAll(ranks, dir == Directions.OUT ? inSeeds : outSeeds);
+        } else if (withLabel == WithLabel.OTHER_LABEL) {
+            removeAll(ranks, dir == Directions.OUT ? outSeeds : inSeeds);
+        }
         return ranks;
     }
 
