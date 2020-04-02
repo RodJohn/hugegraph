@@ -18,3 +18,5 @@
 target
 gen-java
 build
+/hugegraph-dist/src/assembly/static/conf/gremlin-server.yaml
+/hugegraph-dist/src/assembly/static/conf/gremlin-server.yaml
