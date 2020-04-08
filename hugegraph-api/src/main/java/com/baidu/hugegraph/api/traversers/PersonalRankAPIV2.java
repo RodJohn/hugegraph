@@ -85,6 +85,8 @@ public class PersonalRankAPIV2 extends API {
                   graph, request.sources, request.label, request.alpha,
                   request.degree, request.maxDepth, request.sorted);
 
+        System.out.println("1");
+
         List<Id> ids = new ArrayList<>();
         String[] split = request.sources.split(",");
         for (String id : split){

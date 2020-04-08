@@ -62,7 +62,6 @@ public class PersonalRankTraverserV2 extends PersonalRankTraverser {
             if (i == 0) {
                 rootAdjacencies.addAll(ranks.keySet());
             }
-            System.out.println(ranks);
         }
 //         Remove directly connected neighbors
         removeAll(ranks, rootAdjacencies);
